@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  bot:
+    build: .
+  mongo:
+    image: mongo
+    volumes:
+      - mongodbdata:/data/db
+  redis:
+    image: redis
+    restart: always
+    volumes:
+      - ./redis_data:/data
+volumes:
+  mongodbdata:
