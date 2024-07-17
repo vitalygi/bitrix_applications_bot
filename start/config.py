@@ -4,7 +4,9 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
 
-admins = []
+admins = [450626281]
+managers = [450626281]
+admin_group = -1002245837205
 TOKEN = getenv("BOT_TOKEN")
 
 bot = Bot(token=TOKEN,

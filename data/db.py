@@ -16,5 +16,5 @@ class Database:
         :return:
         """
         client = AsyncIOMotorClient(URI)
-        await init_beanie(database=client.cbd, document_models=[Product])
+        await init_beanie(database=client.applications, document_models=[User,Application])
         logging.log(level=logging.INFO, msg='Database started')
