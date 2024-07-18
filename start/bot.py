@@ -1,5 +1,7 @@
 import logging.config
 
+from aiogram.fsm.storage.base import DefaultKeyBuilder
+
 from .config import bot
 from handlers.register import register_dispatcher
 from aiogram.fsm.storage.redis import RedisStorage
@@ -13,5 +15,5 @@ with open("logging.yaml", "r") as f:
 
 
 async def start():
-    dp = await register_dispatcher(storage=RedisStorage(Redis()))#host='redis')))
+    dp = await register_dispatcher(storage=RedisStorage(Redis(),key_builder=DefaultKeyBuilder(with_destiny=True)))#host='redis')))
     await dp.start_polling(bot)

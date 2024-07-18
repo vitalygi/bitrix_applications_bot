@@ -10,15 +10,21 @@ class User(Document):
     nickname: Optional[str] = None
     username: Optional[str] = None
     is_registered: bool = False
+    register_date: Optional[str] = None
+
 
 class Application(Document):
+    id: int
     responsible: Optional[str] = ''
     direction: Optional[str] = ''
     pay_form: Optional[str] = ''
     payer: Optional[str] = ''
     article: Optional[str] = ''
     comments: Optional[str] = ''
-    amount: int
+    amount: Optional[int] = 0
     payment_date: Optional[str] = ''
     add_info: Optional[str] = ''
-    files: Optional[List[str]] = []
+    file: Optional[str] = ''
+    file_type: Optional[str] = ''
+    is_checked: Optional[bool] = False
+    user_id: int

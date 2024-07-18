@@ -1,16 +1,13 @@
 from contextlib import suppress
 
-from aiogram import Router, flags, F
-from aiogram.filters import Command
-from aiogram.types import Message, CallbackQuery
-from aiogram.fsm.context import FSMContext
+from aiogram import Router
+from aiogram.types import CallbackQuery
 
 from data.models import User
 from filters.admin_filter import IsAdmin
 from keyboard.user.application_keyboard import create_application
-from routers.callbacks import StartCallbacksRouter
 from routers.verification_user_fabric import VerificationCb, VerificationAction
-from handlers.utils import change_user_state_data_key
+from handlers.utils.utils import change_user_state_data_key
 from start.config import bot
 
 router = Router()

@@ -7,7 +7,7 @@ from data.models import User
 
 class UserInjectionMiddleware(BaseMiddleware):
     """
-    Middleware для проверки флагов
+    Middleware для инжекта юзеров
     """
 
     async def __call__(
@@ -35,6 +35,7 @@ class UserInjectionMiddleware(BaseMiddleware):
         await user.save()
         data['user'] = user
         # inject any data to event
-        event = event.model_copy(update={"is_registered": True if user is not None and user.is_registered == True else False})
+        event = event.model_copy(update={"is_registered": True if user is not None and user.is_registered == True else False,
+                                         "name": user.name})
 
         return await handler(event, data)
