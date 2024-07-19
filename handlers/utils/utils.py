@@ -1,3 +1,5 @@
+from contextlib import suppress
+
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import Message
@@ -76,9 +78,10 @@ async def notify_admins_and_managers(application: Application, status: bool):
 Дата оплаты:{application.payment_date}
 Доп.информация для оплаты:{application.add_info}
         """
-        if application.file_type == 'document':
-            await bot.send_document(chat_id=id, caption=text, document=application.file)
-        else:
-            await bot.send_photo(chat_id=id, caption=text, photo=application.file)
+        with suppress(Exception):
+            if application.file_type == 'document':
+                await bot.send_document(chat_id=id, caption=text, document=application.file)
+            else:
+                await bot.send_photo(chat_id=id, caption=text, photo=application.file)
 
 

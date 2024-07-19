@@ -15,7 +15,7 @@ from routers.create_application_fabric import *
 from handlers.utils.utils import change_state_key
 from states.user.create_application import ApplicationStatesGroup
 from keyboard.user.application_keyboard import create_application as create_application_kb
-
+from keyboard.user.application_keyboard import send_application as send_application_kb
 router = Router()
 
 router.message.filter(IsRegistered())
@@ -156,7 +156,7 @@ async def check_application(message: Message, state: FSMContext):
     application_id = random.randint(1, 1_000_000_000)
 
     await message.answer(f'Заявка №{application_id} готова\nНажмите кнопку Отправить заявку',
-                         reply_markup=send_application(application_id))
+                         reply_markup=send_application_kb(application_id))
     await state.set_state(None)
 
 
