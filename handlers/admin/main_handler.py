@@ -14,9 +14,8 @@ router = Router()
 
 
 
-@router.message(Command('admin'), IsAdmin())
+@router.message(Command('start'), IsAdmin())
 @router.callback_query(AdminCb(action=AdminAction.menu).route)
-@flags.del_from
 async def handle_start(message: Message, state: FSMContext):
     if isinstance(message, CallbackQuery):
         message = message.message

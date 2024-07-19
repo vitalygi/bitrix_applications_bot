@@ -68,15 +68,15 @@ async def notify_admins_and_managers(application: Application, status: bool):
         user: User = await User.find_one(User.id == application.user_id)
         text = f"""
 Заявка №{application.id} от {user.name} {'согласована' if status else 'не согласована'}
-Ответственный:{application.responsible}
-Направление:{application.direction}
-Форма оплаты:{application.pay_form}
-Плательщик:{application.payer}
-Статья:{application.article}
-Комментарии:{application.comments}
-Сумма:{application.amount}
-Дата оплаты:{application.payment_date}
-Доп.информация для оплаты:{application.add_info}
+Ответственный: {application.responsible}
+Направление: {application.direction}
+Форма оплаты: {application.pay_form}
+Плательщик: {application.payer}
+Статья: {application.article}
+Комментарии: {application.comments}
+Сумма: {application.amount}
+Дата оплаты: {application.payment_date}
+Доп.информация для оплаты: {application.add_info}
         """
         with suppress(Exception):
             if application.file_type == 'document':

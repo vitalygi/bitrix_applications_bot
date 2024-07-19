@@ -1,8 +1,11 @@
+from contextlib import suppress
+
 from aiogram.types import Message
 
 from data.models import Application, User
 from keyboard.manager.verify_application_keyboard import verify_application_kb
-
+from start.config import managers, bot
+from keyboard.manager.verify_application_keyboard import all_applications
 
 async def render_application_to_check(application: Application, message: Message):
     """
@@ -18,15 +21,15 @@ async def render_application_to_check(application: Application, message: Message
     user: User = await User.find_one(User.id == application.user_id)
     text = f"""
 Заявка №{application.id} от {user.name}
-Ответственный:{application.responsible}
-Направление:{application.direction}
-Форма оплаты:{application.pay_form}
-Плательщик:{application.payer}
-Статья:{application.article}
-Комментарии:{application.comments}
-Сумма:{application.amount}
-Дата оплаты:{application.payment_date}
-Доп.информация для оплаты:{application.add_info}
+Ответственный: {application.responsible}
+Направление: {application.direction}
+Форма оплаты: {application.pay_form}
+Плательщик: {application.payer}
+Статья: {application.article}
+Комментарии: {application.comments}
+Сумма: {application.amount}
+Дата оплаты: {application.payment_date}
+Доп.информация для оплаты: {application.add_info}
 """
     keyboard = verify_application_kb(application.id)
     if application.file_type == 'document':
@@ -36,3 +39,21 @@ async def render_application_to_check(application: Application, message: Message
 
 
 
+async def notify_managers(application: Application):
+    """
+    Функция уведомляет менеджеров о новой заявке.
+
+    :param application: Объект заявки
+    """
+    to_mail = [*managers]
+    ids_to_send = set(to_mail)
+    for id in ids_to_send:
+        user: User = await User.find_one(User.id == application.user_id)
+        text = f"""
+Новая заявка №{application.id} от {user.name}
+        """
+        with suppress(Exception):
+            if application.file_type == 'document':
+                await bot.send_document(chat_id=id, caption=text, document=application.file,reply_markup=all_applications())
+            else:
+                await bot.send_photo(chat_id=id, caption=text, photo=application.file,reply_markup=all_applications())

@@ -8,6 +8,7 @@ from aiogram_dialog import DialogManager, StartMode
 from data.models import Application, User
 from filters.register_filter import IsRegistered
 from handlers.user.widgets.calendar import CalendarState, calendar_dialog
+from handlers.utils.manager_utils import notify_managers
 from handlers.utils.utils import mark_message_to_del
 from keyboard.user.application_keyboard import *
 from keyboard.utils import application_back_markup_with_action
@@ -172,6 +173,7 @@ async def send_application(query: CallbackQuery, callback_data: ApplicationCb, s
     await application.save()
     await query.message.answer(text='Создать заявку', reply_markup=create_application_kb())
     await state.set_state(None)
+    await notify_managers(application)
 
 
 async def create_application(application_id, state: FSMContext, user_id) -> Application:

@@ -16,8 +16,7 @@ from handlers.utils.manager_utils import render_application_to_check
 router = Router()
 
 
-@router.message(Command('manager'))
-@flags.del_from
+@router.message(Command('start'))
 async def handle_start(message: Message, state: FSMContext):
     await state.clear()
     await message.answer('Вы являетесь руководителем бота, тут будут отображаться заявки на согласование документов',
@@ -25,6 +24,7 @@ async def handle_start(message: Message, state: FSMContext):
 
 
 @router.callback_query(ManagerCb(action=ManagerAction.all_applications).route)
+@flags.del_from
 async def handle_all_applications(query: CallbackQuery):
     applications = await Application.find(Application.is_checked == False).to_list()
     if len(applications) == 0:
