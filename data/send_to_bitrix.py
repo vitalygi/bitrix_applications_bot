@@ -22,6 +22,8 @@ async def send_application_to_bitrix(application: Application):
     """
     user: User = await User.find_one(User.id == application.user_id)
     deal_id = await create_bitrix24_deal(application, user)
+    if deal_id is None:
+        return
     file_name, file_base64 = await file_to_base64(application.file)
     await attach_file_to_deal(deal_id, file_name, file_base64)
 
@@ -58,7 +60,8 @@ async def create_bitrix24_deal(application: Application, user: User):
     Returns:
         Результат создания сделки в Bitrix24.
     """
-
+    if application.is_checked == True:
+        return None
     payload = {
         'fields': {
             "UF_CRM_CHAT_ID": application.id,

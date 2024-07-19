@@ -39,6 +39,8 @@ async def handle_enter_id(query: CallbackQuery, state: FSMContext, callback_data
     application_id = callback_data.answer
     application = await Application.find_one(Application.id == int(application_id))
     try:
+        if application.is_checked == True:
+            return await query.answer('Заявка уже была согласована!', show_alert=True)
         await send_application_to_bitrix(application)
         await notify_admins_and_managers(application, True)
         await bot.send_message(chat_id=application.user_id, text=f'Ваша заявка №{application_id} согласована')
@@ -55,6 +57,8 @@ async def handle_enter_id(query: CallbackQuery, state: FSMContext, callback_data
 async def handle_enter_id(query: CallbackQuery, state: FSMContext, callback_data: ManagerCb):
     application_id = callback_data.answer
     application = await Application.find_one(Application.id == int(application_id))
+    if application.is_checked == True:
+        return await query.answer('Заявка уже была отклонена!', show_alert=True)
     await bot.send_message(chat_id=application.user_id, text=f'Ваша заявка №{application_id} не согласована')
     await application.set({'is_checked': True})
     await notify_admins_and_managers(application, False)
