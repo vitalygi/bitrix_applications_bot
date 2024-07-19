@@ -52,7 +52,7 @@ async def enter_direction(query: CallbackQuery, callback_data: ApplicationCb, st
 
 @router.callback_query(ApplicationCb(action=ApplicationAction.enter_pay_form).route)
 @flags.del_from
-async def enter_direction(query: CallbackQuery, callback_data: ApplicationCb, state: FSMContext):
+async def enter_pay_form(query: CallbackQuery, callback_data: ApplicationCb, state: FSMContext):
     if callback_data.answer is not None:
         await change_state_key(state, 'pay_form', callback_data.answer)
     await query.message.answer(text='Плательщик:', reply_markup=choose_payer_kb())
@@ -61,7 +61,7 @@ async def enter_direction(query: CallbackQuery, callback_data: ApplicationCb, st
 @router.callback_query(ApplicationCb(action=ApplicationAction.enter_payer).route)
 @router.callback_query(ApplicationCb(action=ApplicationAction.enter_article).route)
 @flags.del_from
-async def enter_direction(query: CallbackQuery, callback_data: ApplicationCb, state: FSMContext):
+async def enter_payer(query: CallbackQuery, callback_data: ApplicationCb, state: FSMContext):
     if callback_data.answer is not None:
         await change_state_key(state, 'payer', callback_data.answer)
     await mark_message_to_del(await query.message.answer('Введите статью:',
@@ -73,7 +73,7 @@ async def enter_direction(query: CallbackQuery, callback_data: ApplicationCb, st
 @router.message(ApplicationStatesGroup.enter_article)
 @router.callback_query(ApplicationCb(action=ApplicationAction.enter_comments).route)
 @flags.del_from
-async def enter_responsible_handler(message: Message, state: FSMContext):
+async def enter_article(message: Message, state: FSMContext):
     if not isinstance(message, CallbackQuery):
         await change_state_key(state, 'article', message.text)
     else:
@@ -101,7 +101,7 @@ async def enter_comments(message: Message, state: FSMContext):
 @router.message(ApplicationStatesGroup.enter_amount)
 @router.callback_query(ApplicationCb(action=ApplicationAction.enter_payment_date).route)
 @flags.del_from
-async def enter_responsible_handler(message: Message, state: FSMContext, dialog_manager: DialogManager):
+async def enter_amount(message: Message, state: FSMContext, dialog_manager: DialogManager):
     if not isinstance(message, CallbackQuery):
         try:
             int(message.text)
@@ -117,7 +117,7 @@ async def enter_responsible_handler(message: Message, state: FSMContext, dialog_
 
 @router.callback_query(ApplicationCb(action=ApplicationAction.enter_add_info).route)
 @flags.del_from
-async def enter_responsible_handler(query: CallbackQuery, state: FSMContext):
+async def enter_add_info(query: CallbackQuery, state: FSMContext):
     await state.set_state(ApplicationStatesGroup.enter_add_info)
     await mark_message_to_del(await query.message.answer('Доп.информация для оплаты:',
                                                          reply_markup=application_back_markup_with_action(
@@ -128,7 +128,7 @@ async def enter_responsible_handler(query: CallbackQuery, state: FSMContext):
 @router.message(ApplicationStatesGroup.enter_file, F.text)
 @router.callback_query(ApplicationCb(action=ApplicationAction.enter_file).route)
 @flags.del_from
-async def enter_responsible_handler(message: Message, state: FSMContext):
+async def enter_file(message: Message, state: FSMContext):
     if not isinstance(message, CallbackQuery):
         await change_state_key(state, 'add_info', message.text)
     else:
@@ -143,7 +143,7 @@ async def enter_responsible_handler(message: Message, state: FSMContext):
 @router.message(ApplicationStatesGroup.enter_file, F.document)
 @router.callback_query(ApplicationCb(action=ApplicationAction.check_application).route)
 @flags.del_from
-async def enter_responsible_handler(message: Message, state: FSMContext):
+async def check_application(message: Message, state: FSMContext):
     if not isinstance(message, CallbackQuery):
         file = message.document if message.document is not None else message.photo[-1]
         file_type = 'document' if message.document is not None else 'photo'
@@ -162,7 +162,7 @@ async def enter_responsible_handler(message: Message, state: FSMContext):
 
 @router.callback_query(ApplicationCb(action=ApplicationAction.send_application).route)
 @flags.del_from
-async def enter_responsible_handler(query: CallbackQuery, callback_data: ApplicationCb, state: FSMContext, user: User):
+async def send_application(query: CallbackQuery, callback_data: ApplicationCb, state: FSMContext, user: User):
     application = await create_application(callback_data.answer, state, user.id)
     caption = f'Ваша заявка №{application.id} передана на рассмотрение'
     if application.file_type == 'document':
