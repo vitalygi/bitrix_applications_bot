@@ -1,3 +1,4 @@
+import datetime
 import random
 
 from aiogram import Router, flags
@@ -9,7 +10,7 @@ from data.models import Application, User
 from filters.register_filter import IsRegistered
 from handlers.user.widgets.calendar import CalendarState, calendar_dialog
 from handlers.utils.manager_utils import notify_managers
-from handlers.utils.utils import mark_message_to_del
+from handlers.utils.utils import mark_message_to_del, get_application_id
 from keyboard.user.application_keyboard import *
 from keyboard.utils import application_back_markup_with_action
 from routers.create_application_fabric import *
@@ -154,7 +155,7 @@ async def check_application(message: Message, state: FSMContext):
     else:
         message = message.message
 
-    application_id = random.randint(1, 1_000_000_000)
+    application_id = await get_application_id()
 
     await message.answer(f'Заявка №{application_id} готова\nНажмите кнопку Отправить заявку',
                          reply_markup=send_application_kb(application_id))
@@ -191,6 +192,7 @@ async def create_application(application_id, state: FSMContext, user_id) -> Appl
     file_type = data.get('file_type', '')
     application = Application(
         id=int(application_id),
+        date=datetime.datetime.now().strftime('%d.%m.%Y'),
         user_id=user_id,
         responsible=responsible,
         direction=direction,

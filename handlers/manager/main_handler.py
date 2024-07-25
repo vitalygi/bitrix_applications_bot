@@ -34,18 +34,19 @@ async def handle_all_applications(query: CallbackQuery):
 
 
 @router.callback_query(ManagerCb(action=ManagerAction.verify_application).route)
-@flags.del_from
 async def handle_enter_id(query: CallbackQuery, state: FSMContext, callback_data: ManagerCb):
     application_id = callback_data.answer
     application = await Application.find_one(Application.id == int(application_id))
     try:
         if application.is_checked == True:
+            await query.message.edit_caption(text=query.message.caption + '\nЗаявка согласована', reply_markup=None)
             return await query.answer('Заявка уже была согласована!', show_alert=True)
         await send_application_to_bitrix(application)
-        await notify_admins_and_managers(application, True)
+        #await notify_admins_and_managers(application, True)
         await bot.send_message(chat_id=application.user_id, text=f'Ваша заявка №{application_id} согласована')
         await application.set({'is_checked': True})
         await query.answer('Заявка успешно отправлена!', show_alert=True)
+        await query.message.edit_caption(caption=query.message.caption + '\nЗаявка согласована', reply_markup=None)
     except Exception as e:
         logging.exception(e)
         await query.answer('Произошла ошибка!', show_alert=True)
@@ -53,12 +54,13 @@ async def handle_enter_id(query: CallbackQuery, state: FSMContext, callback_data
 
 
 @router.callback_query(ManagerCb(action=ManagerAction.block_application).route)
-@flags.del_from
 async def handle_enter_id(query: CallbackQuery, state: FSMContext, callback_data: ManagerCb):
     application_id = callback_data.answer
     application = await Application.find_one(Application.id == int(application_id))
     if application.is_checked == True:
+        await query.message.edit_caption(caption=query.message.caption + '\nЗаявка отклонена', reply_markup=None)
         return await query.answer('Заявка уже была отклонена!', show_alert=True)
     await bot.send_message(chat_id=application.user_id, text=f'Ваша заявка №{application_id} не согласована')
     await application.set({'is_checked': True})
-    await notify_admins_and_managers(application, False)
+    #await notify_admins_and_managers(application, False)
+    await query.message.edit_caption(caption=query.message.caption + '\nЗаявка отклонена',reply_markup=None)

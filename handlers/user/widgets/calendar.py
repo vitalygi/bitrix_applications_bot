@@ -290,7 +290,7 @@ BOOK_BUTTON = Button(
 calendar_dialog = Dialog(
     Window(
         Format("\nВы выбрали:\n{selected}", when=F["selected"]),
-        Format("\nВыберите дату", when=~F["selected"]),
+        Format("\nВыберите дату оплаты", when=~F["selected"]),
         CustomCalendar(
             id="cal",
             on_click=on_date_selected,

@@ -15,6 +15,7 @@ class User(Document):
 
 class Application(Document):
     id: int
+    date: Optional[str] = ''
     responsible: Optional[str] = ''
     direction: Optional[str] = ''
     pay_form: Optional[str] = ''

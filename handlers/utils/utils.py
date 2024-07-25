@@ -1,5 +1,6 @@
 from contextlib import suppress
 
+import pymongo
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import Message
@@ -77,6 +78,7 @@ async def notify_admins_and_managers(application: Application, status: bool):
 Сумма: {application.amount}
 Дата оплаты: {application.payment_date}
 Доп.информация для оплаты: {application.add_info}
+Дата создания: {application.date}
         """
         with suppress(Exception):
             if application.file_type == 'document':
@@ -85,3 +87,11 @@ async def notify_admins_and_managers(application: Application, status: bool):
                 await bot.send_photo(chat_id=id, caption=text, photo=application.file)
 
 
+async def get_application_id() -> int:
+    """
+    Функция возвращает уникальный идентификатор заявки.
+
+    :return: Уникальный идентификатор заявки
+    """
+    last_application = await Application.find().sort("id").to_list()
+    return last_application[-1].id + 1 if last_application and len(last_application) > 0 else 1
